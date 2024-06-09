@@ -1,0 +1,35 @@
+### authenticate
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "vuhoainam@gmail.com",
+  "password": "123456"
+}
+
+> {% client.global.set("auth_token", response.body.accessToken); %}
+
+
+
+#### register
+#POST http://localhost:8080/api/v1/auth/register
+#Content-Type: application/json
+#
+#{
+#  "email": "vuhoainam@gmail.com",
+#  "password": "123456",
+#  "firstName": "Nam",
+#  "lastName": "Vu"
+#}
+
+### greeting
+GET http://localhost:8080/api/v1/auth/greeting
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2dWhvYWluYW1AZ21haWwuY29tIiwiaWF0IjoxNzE3OTA0NzI2LCJleHAiOjE3MTc5MDUzMjZ9.H5c4GizLlNuwRu2bl9U82l_aUmvIwHJe5pBtfHIvrNY
+
+### logout
+POST http://localhost:8080/api/v1/auth/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2dWhvYWluYW1AZ21haWwuY29tIiwiaWF0IjoxNzE3OTA0NzI2LCJleHAiOjE3MTc5MDUzMjZ9.H5c4GizLlNuwRu2bl9U82l_aUmvIwHJe5pBtfHIvrNY
+
+
+
+###
