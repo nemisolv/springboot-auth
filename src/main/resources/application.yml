@@ -14,5 +14,5 @@ spring:
 secure:
   jwt:
     secret-key: MHQCAQEEIEYgBlyQVsH7SpHUH7x4RErcckhu7ary/JjhP72Nk19EoAcGBSuBBAAKoUQDQgAE1MtHIxlGP5TARqBccrddNm1FnYH1Fp+onETz5KbXPSeG5FGwKMUXGfAmSZJq2gENULFewwymt+9bTXkjBZhh8A==
-    token-expire: 600000
+    token-expire: 60000
     refreshToken-expire: 10080000

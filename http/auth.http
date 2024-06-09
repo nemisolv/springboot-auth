@@ -24,12 +24,14 @@ Content-Type: application/json
 
 ### greeting
 GET http://localhost:8080/api/v1/auth/greeting
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2dWhvYWluYW1AZ21haWwuY29tIiwiaWF0IjoxNzE3OTA0NzI2LCJleHAiOjE3MTc5MDUzMjZ9.H5c4GizLlNuwRu2bl9U82l_aUmvIwHJe5pBtfHIvrNY
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2dWhvYWluYW1AZ21haWwuY29tIiwiaWF0IjoxNzE3OTE2ODE3LCJleHAiOjE3MTc5MTY4Nzd9.cGY3GKBq0C7dWIjdaxs84PlqnJQiYIJywyY-lgJLaC0
 ### logout
 POST http://localhost:8080/api/v1/auth/logout
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2dWhvYWluYW1AZ21haWwuY29tIiwiaWF0IjoxNzE3OTA0NzI2LCJleHAiOjE3MTc5MDUzMjZ9.H5c4GizLlNuwRu2bl9U82l_aUmvIwHJe5pBtfHIvrNY
+Authorization: Bearer {{auth_token}}
 
+### refresh token
+POST http://localhost:8080/api/v1/auth/refresh_token
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2dWhvYWluYW1AZ21haWwuY29tIiwiaWF0IjoxNzE3OTEyODI1LCJleHAiOjE3MTc5MjI5MDV9.n6hO5ygEPnAt5PqS2KbXPI1eqwx2oe_OrVFdJKQuRYE
 
 
 ###

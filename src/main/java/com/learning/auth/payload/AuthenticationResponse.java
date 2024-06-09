@@ -1,5 +1,6 @@
 package com.learning.auth.payload;
 
+import com.learning.auth.payload.user.FullInfoUser;
 import lombok.*;
 
 @Getter
@@ -10,4 +11,5 @@ import lombok.*;
 public class AuthenticationResponse {
     private String accessToken;
     private String refreshToken;
+    private FullInfoUser userData;
 }

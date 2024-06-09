@@ -20,6 +20,7 @@ public class Token {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+//    @Column(columnDefinition = "TEXT")
     private String token;
     @Enumerated(EnumType.STRING)
     private TokenType type;

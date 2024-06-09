@@ -4,10 +4,14 @@ import com.learning.auth.payload.AuthenticationRequest;
 import com.learning.auth.payload.AuthenticationResponse;
 import com.learning.auth.payload.RegisterRequest;
 import com.learning.auth.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,13 +34,16 @@ public class AuthenticationController {
 
 
 
-
-
     @GetMapping("/greeting")
-    public String greeting() {
-        return "Hello World";
+    public String hello() {
+        return "hello";
     }
 
-//    @PostMapping("/refresh_token")
-//    public
+
+
+
+    @PostMapping("/refresh_token")
+    public void refreshToken(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        authService.refreshToken(req, res);
+    }
 }
