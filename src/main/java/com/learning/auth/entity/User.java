@@ -32,6 +32,10 @@ public class User implements UserDetails {
     private String lastName;
     private boolean verified;
 
+//    enable 2fa
+    private boolean mfaEnabled;
+    private String secret;
+
     @JsonIgnore
     private boolean enabled ;
 

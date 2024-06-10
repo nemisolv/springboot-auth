@@ -14,4 +14,5 @@ public class FullInfoUser {
     private String lastName;
     private boolean verified;
     private String picture;
+    private boolean mfaEnabled;
 }

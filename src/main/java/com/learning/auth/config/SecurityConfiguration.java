@@ -32,7 +32,7 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/auth/login","/api/v1/auth/register").permitAll()
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/auth/login","/api/v1/auth/register","/api/v1/auth/verify-mfa").permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -41,6 +41,7 @@ public class SecurityConfiguration {
                                 .addLogoutHandler(logoutHandler).logoutSuccessHandler((req,res,auth)->
                         SecurityContextHolder.clearContext())
                         )
+                .oauth2Login(oauth2 -> oauth2.)
                 ;
 
 

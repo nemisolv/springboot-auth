@@ -3,19 +3,22 @@ package com.learning.auth.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.learning.auth.entity.*;
 import com.learning.auth.helper.UserHelper;
-import com.learning.auth.payload.AuthenticationRequest;
-import com.learning.auth.payload.AuthenticationResponse;
-import com.learning.auth.payload.RegisterRequest;
+import com.learning.auth.payload.auth.AuthenticationRequest;
+import com.learning.auth.payload.auth.AuthenticationResponse;
+import com.learning.auth.payload.auth.RegisterRequest;
+import com.learning.auth.payload.auth.VerificationMfaRequest;
 import com.learning.auth.payload.user.FullInfoUser;
 import com.learning.auth.repository.RoleRepository;
 import com.learning.auth.repository.TokenRepository;
 import com.learning.auth.repository.UserRepository;
 import com.learning.auth.service.AuthService;
 import com.learning.auth.service.JwtService;
+import com.learning.auth.service.TwoFactorAuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpHeaders;
@@ -23,9 +26,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepo;
     private final RoleRepository roleRepo;
@@ -44,20 +47,33 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final ModelMapper modelMapper;
     private final UserHelper userHelper;
+    private final TwoFactorAuthenticationService tfaService;
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest authRequest) {
         try {
-            authenticationManager.authenticate(
+            Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword())
             );
 
-            User user = userRepo.findByEmail(authRequest.getEmail())
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            User user = (User) authentication.getPrincipal();
 
             if (!user.isVerified()) {
                 throw new BadCredentialsException("User not verified");
             }
+            // check if user enable mfa
+            if(user.isMfaEnabled()) {
+                return AuthenticationResponse.builder()
+                        .accessToken("")
+                        .refreshToken("")
+                        .secretImageUri(tfaService.generateQrCodeImageUri(user.getSecret()))
+                        .mfaEnabled(true)
+                        .build();
+
+            }
+
+
+
             return getAuthenticationResponse(user);
 
 
@@ -123,6 +139,18 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    @Override
+    public AuthenticationResponse verifyMfaCode(VerificationMfaRequest verificationMfaRequest) {
+        User user = userRepo.findByEmail(verificationMfaRequest.getEmail()).orElseThrow();
+        if(!tfaService.isOtpValid(user.getSecret(), verificationMfaRequest.getCode())) {
+            throw new BadCredentialsException("Code is not correct");
+        }
+
+
+
+        return getAuthenticationResponse(user);
+    }
+
     private AuthenticationResponse getAuthenticationResponse(User user) {
 
         // instead of adding user's info to token, let's separate it
@@ -133,7 +161,9 @@ public class AuthServiceImpl implements AuthService {
         revokeAllUserTokens(user);
 
         saveUserToken(user, token);
-        return new AuthenticationResponse(token, refreshToken, userInfo);
+        return AuthenticationResponse.builder()
+                .userData(userInfo)
+                .accessToken(token).refreshToken(refreshToken).build();
     }
 
     private void saveUserToken(User user, String token) {

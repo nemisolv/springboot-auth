@@ -5,4 +5,5 @@ import com.learning.auth.payload.ChangePasswordRequest;
 
 public interface UserService {
     void changePassword(ChangePasswordRequest passwordRequest, User ser);
+    void enableMFA(boolean enabled, User user);
 }

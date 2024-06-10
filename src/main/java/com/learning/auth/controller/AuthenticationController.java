@@ -1,8 +1,9 @@
 package com.learning.auth.controller;
 
-import com.learning.auth.payload.AuthenticationRequest;
-import com.learning.auth.payload.AuthenticationResponse;
-import com.learning.auth.payload.RegisterRequest;
+import com.learning.auth.payload.auth.AuthenticationRequest;
+import com.learning.auth.payload.auth.AuthenticationResponse;
+import com.learning.auth.payload.auth.RegisterRequest;
+import com.learning.auth.payload.auth.VerificationMfaRequest;
 import com.learning.auth.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -42,8 +43,15 @@ public class AuthenticationController {
 
 
 
-    @PostMapping("/refresh_token")
+    @PostMapping("/refresh-token")
     public void refreshToken(HttpServletRequest req, HttpServletResponse res) throws IOException {
         authService.refreshToken(req, res);
+    }
+
+    @PostMapping("/verify-mfa")
+    public ResponseEntity<?> verifyMfaCode(@RequestBody VerificationMfaRequest verificationMfaRequest) {
+        AuthenticationResponse authenticationResponse = authService.verifyMfaCode(verificationMfaRequest);
+        return ResponseEntity.ok(authenticationResponse);
+
     }
 }
