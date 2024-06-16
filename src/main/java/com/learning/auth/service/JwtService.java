@@ -23,11 +23,11 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class JwtService {
 
-    @Value("${secure.jwt.secret-key}")
+    @Value("${app.secure.jwt.secret-key}")
     private String secretKey;
-    @Value("${secure.jwt.token-expire}")
+    @Value("${app.secure.jwt.token-expire}")
     private long tokenExpire;
-    @Value("${secure.jwt.refreshToken-expire}")
+    @Value("${app.secure.jwt.refreshToken-expire}")
     private long refreshTokenExpire;
 
     public String extractUsername(String token) {
@@ -53,6 +53,10 @@ public class JwtService {
 
     public String generateRefreshToken(Map<String,Object> extraClaims, UserDetails userDetails) {
         return buildToken(extraClaims,userDetails, refreshTokenExpire);
+    }
+
+    public String generateTokenWithExpire(UserDetails userDetails, long expire) {
+        return buildToken(new HashMap<>(),userDetails, expire);
     }
 
 

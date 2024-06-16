@@ -17,7 +17,7 @@ public class UserHelper {
 //            username = username + (int)(Math.random() * 1000);
 //        }while(userRepo.findByUsername(username) != null);
 
-        while(userRepo.findByUsername(username) != null) {
+        while(userRepo.findByUsername(username).isPresent()) {
             username = username + (int)(Math.random() * 1000);
         }
 

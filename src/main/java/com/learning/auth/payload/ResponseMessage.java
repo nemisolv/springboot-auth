@@ -12,4 +12,8 @@ import lombok.Setter;
 public class ResponseMessage {
     private int code;
     private String message;
+
+    public ResponseMessage(String message) {
+        this.message = message;
+    }
 }

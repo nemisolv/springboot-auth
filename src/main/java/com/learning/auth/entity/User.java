@@ -1,6 +1,7 @@
 package com.learning.auth.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +10,7 @@ import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.*;
 
@@ -19,25 +21,47 @@ import java.util.*;
 @Data
 @Builder
 
-public class User implements UserDetails {
+public class User implements UserDetails, OAuth2User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true, nullable = false)
     private String username;
     private String password;
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String email;
     private String firstName;
     private String lastName;
-    private boolean verified;
 
-//    enable 2fa
+    //    email verification
+    private boolean verified;
+//    // this user have already registered but not verified, so other user can register with this email
+//    private boolean draft;
+
+
+    private String picture;
+
+    //    enable 2fa
     private boolean mfaEnabled;
     private String secret;
 
     @JsonIgnore
-    private boolean enabled ;
+    private boolean enabled;
+
+
+
+
+//    oauth2
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private AuthProvider authProvider;
+
+    @Column(name = "provider_id")
+
+    private String providerId;
+
+
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
@@ -50,32 +74,16 @@ public class User implements UserDetails {
     private List<Token> tokens = new ArrayList<>();
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Override
     public String getUsername() {
         return email;
     }
 
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return Map.of("id", id, "username", username, "email", email, "firstName", firstName, "lastName", lastName, "verified", verified);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -93,7 +101,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return enabled;
+        return true;
     }
 
     @Override
@@ -103,7 +111,13 @@ public class User implements UserDetails {
 
 
     @PrePersist
-    public void prePersist(){
+    public void prePersist() {
         enabled = true;
+        verified = false;
+    }
+
+    @Override
+    public String getName() {
+        return String.valueOf(id);
     }
 }

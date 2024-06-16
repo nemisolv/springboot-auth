@@ -1,5 +1,7 @@
 package com.learning.auth.controller;
 
+import com.learning.auth.entity.User;
+import com.learning.auth.payload.ResponseMessage;
 import com.learning.auth.payload.auth.AuthenticationRequest;
 import com.learning.auth.payload.auth.AuthenticationResponse;
 import com.learning.auth.payload.auth.RegisterRequest;
@@ -9,7 +11,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -28,16 +32,17 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest authRequest) throws BadRequestException {
-        AuthenticationResponse response = authService.register(authRequest);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<ResponseMessage> register(@RequestBody RegisterRequest authRequest) throws BadRequestException, com.learning.auth.exception.BadRequestException {
+     authService.register(authRequest);
+        return new ResponseEntity<>(new ResponseMessage("User registered successfully"), HttpStatusCode.valueOf(201));
     }
 
 
 
-    @GetMapping("/greeting")
-    public String hello() {
-        return "hello";
+    @GetMapping("/verify-email")
+    public ResponseEntity<ResponseMessage> verifyEmail(@RequestParam String token) throws com.learning.auth.exception.BadRequestException {
+        authService.verifyEmail(token);
+        return ResponseEntity.ok(new ResponseMessage("Email verified successfully"));
     }
 
 

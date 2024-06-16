@@ -12,10 +12,11 @@ import java.io.IOException;
 
 public interface AuthService {
     AuthenticationResponse authenticate(AuthenticationRequest authRequest);
-    AuthenticationResponse register(RegisterRequest authRequest) throws BadRequestException;
+    void register(RegisterRequest authRequest) throws BadRequestException, com.learning.auth.exception.BadRequestException;
     void refreshToken(HttpServletRequest req, HttpServletResponse res) throws IOException;
 
     AuthenticationResponse verifyMfaCode(VerificationMfaRequest verificationMfaRequest);
+    void verifyEmail(String token) throws com.learning.auth.exception.BadRequestException;
 
 }
 
